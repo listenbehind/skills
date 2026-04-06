@@ -6,6 +6,26 @@ The CLI for the open agent skills ecosystem.
 Supports **OpenCode**, **Claude Code**, **Codex**, **Cursor**, and [41 more](#available-agents).
 <!-- agent-list:end -->
 
+## Install the `skills` CLI
+
+With Node.js 20+:
+
+```bash
+npm install -g skills
+```
+
+Or use a **standalone binary** (Node [single executable](https://nodejs.org/api/single-executable-applications.html)) from [Releases](https://github.com/listenbehind/skills/releases) on [listenbehind/skills](https://github.com/listenbehind/skills):
+
+```bash
+# macOS / Linux (downloads from the matching GitHub Release asset)
+curl -fsSL https://raw.githubusercontent.com/listenbehind/skills/main/scripts/install.sh | sh
+
+# Pin a version
+SKILLS_VERSION=v1.4.8 curl -fsSL https://raw.githubusercontent.com/listenbehind/skills/main/scripts/install.sh | sh
+```
+
+Windows: run `scripts/install.bat` from a clone, or download `install.bat` and `install.ps1` from `scripts/` in this repo and double-click / run `install.bat`.
+
 ## Install a Skill
 
 ```bash
