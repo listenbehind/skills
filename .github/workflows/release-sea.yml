@@ -1,0 +1,91 @@
+# Build Node.js Single Executable Application (SEA) binaries and attach to a GitHub Release.
+# Triggers on version tags: v*
+#
+# Requires repo: listenbehind/skills (or change defaults). Ensure Actions has
+# Settings → Actions → Workflow permissions: Read and write.
+name: Release (Node SEA)
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+env:
+  HUSKY: '0'
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            asset_name: skills-linux-amd64
+          # Public ARM Linux runner (requires availability on your org/account).
+          - runner: ubuntu-24.04-arm64
+            asset_name: skills-linux-arm64
+          - runner: macos-14
+            asset_name: skills-darwin-arm64
+          - runner: macos-13
+            asset_name: skills-darwin-amd64
+          - runner: windows-latest
+            asset_name: skills-windows-amd64.exe
+
+    runs-on: ${{ matrix.runner }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Setup pnpm
+        run: corepack enable && corepack prepare pnpm@10.17.1 --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build bundle (dist/cli.mjs)
+        run: pnpm run build
+
+      - name: Build SEA binary
+        env:
+          SEA_OUTPUT_NAME: ${{ matrix.asset_name }}
+        run: pnpm run build:sea
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset_name }}
+          path: build/sea/${{ matrix.asset_name }}
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          merge-multiple: true
+
+      - name: Flatten files for upload
+        run: |
+          mkdir -p upload
+          find release-assets -type f -exec cp -v {} upload/ \;
+          ls -la upload/
+
+      - name: Create GitHub Release with binaries
+        uses: softprops/action-gh-release@v2
+        with:
+          files: upload/*
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
