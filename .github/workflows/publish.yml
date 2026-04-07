@@ -114,12 +114,17 @@ jobs:
           git push
           git push --tags
 
+      # Requires repo secret NPM_TOKEN (npm granular "Automation" token). If unset, skip without failing the job.
       - name: Publish to npm
         id: publish
-        if: steps.version.outputs.bump != 'none'
+        if: steps.version.outputs.bump != 'none' && secrets.NPM_TOKEN != ''
         run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: npm publish skipped
+        if: steps.version.outputs.bump != 'none' && secrets.NPM_TOKEN == ''
+        run: echo '::notice::NPM_TOKEN secret is not set — skipped npm publish. Configure an Automation token in repo Settings → Secrets to publish to the npm registry.'
 
       - name: Create GitHub Release
         if: steps.publish.outcome == 'success'
