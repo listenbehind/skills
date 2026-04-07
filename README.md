@@ -21,7 +21,7 @@ Or use a **standalone binary** (Node [single executable](https://nodejs.org/api/
 curl -fsSL https://raw.githubusercontent.com/listenbehind/skills/main/scripts/install.sh | sh
 
 # Pin a version
-SKILLS_VERSION=v1.4.8 curl -fsSL https://raw.githubusercontent.com/listenbehind/skills/main/scripts/install.sh | sh
+SKILLS_VERSION=v1.4.9 curl -fsSL https://raw.githubusercontent.com/listenbehind/skills/main/scripts/install.sh | sh
 ```
 
 Windows: run `scripts/install.bat` from a clone, or download `install.bat` and `install.ps1` from `scripts/` in this repo and double-click / run `install.bat`.
