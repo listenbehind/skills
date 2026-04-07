@@ -50,10 +50,27 @@ Invoke-WebRequest -Uri $Url -OutFile $OutExe -UseBasicParsing
 Write-Host "Installed: $OutExe"
 
 $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+if ([string]::IsNullOrEmpty($userPath)) { $userPath = "" }
 if ($userPath -notlike "*$InstallDir*") {
-  [Environment]::SetEnvironmentVariable("Path", "$userPath;$InstallDir", "User")
+  $newUserPath = if ($userPath) { "$userPath;$InstallDir" } else { $InstallDir }
+  [Environment]::SetEnvironmentVariable("Path", $newUserPath, "User")
   Write-Host "Added to user PATH: $InstallDir"
-  Write-Host "Open a new terminal, then run: skills"
-} else {
-  Write-Host "Run: skills"
+}
+
+# Current terminal still had the old PATH; refresh so this session finds `skills` immediately.
+$machinePath = [Environment]::GetEnvironmentVariable("Path", "Machine")
+if ([string]::IsNullOrEmpty($machinePath)) { $machinePath = "" }
+$userPathFresh = [Environment]::GetEnvironmentVariable("Path", "User")
+if ([string]::IsNullOrEmpty($userPathFresh)) { $userPathFresh = "" }
+$env:Path = "$machinePath;$userPathFresh"
+
+Write-Host ""
+Write-Host "Use: skills   (or full path below). Do not rely on an old terminal tab without reopening it."
+Write-Host "  $OutExe"
+Write-Host ""
+
+try {
+  & $OutExe --version
+} catch {
+  Write-Host "(Could not run skills here; open a new PowerShell window and try: skills --version)"
 }

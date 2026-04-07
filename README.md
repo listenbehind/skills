@@ -24,7 +24,7 @@ curl -fsSL https://raw.githubusercontent.com/listenbehind/skills/main/scripts/in
 SKILLS_VERSION=v1.4.9 curl -fsSL https://raw.githubusercontent.com/listenbehind/skills/main/scripts/install.sh | sh
 ```
 
-Windows: run `scripts/install.bat` from a clone, or download `install.bat` and `install.ps1` from `scripts/` in this repo and double-click / run `install.bat`.
+Windows: run `scripts/install.bat` from a clone, or download `install.bat` and `install.ps1` from `scripts/` in this repo and run `install.bat`. The binary is `%USERPROFILE%\.local\bin\skills.exe`. If `skills` is not found in an **already open** PowerShell window, either open a **new** terminal or refresh PATH: `$env:Path = [System.Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [System.Environment]::GetEnvironmentVariable('Path','User')`. Then run `skills` (no `.exe` needed when PATH is correct).
 
 ## Install a Skill
 
