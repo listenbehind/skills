@@ -30,9 +30,9 @@ if (maj < 20) {
   process.exit(1);
 }
 
-const mainJs = join(root, 'dist', 'cli.mjs');
+const mainJs = join(root, 'dist', 'cli-sea.cjs');
 if (!existsSync(mainJs)) {
-  console.error('Missing dist/cli.mjs — run pnpm build first');
+  console.error('Missing dist/cli-sea.cjs — run: node scripts/bundle-sea-cjs.mjs (or pnpm build:sea)');
   process.exit(1);
 }
 
@@ -46,9 +46,9 @@ if (!existsSync(postjectCli)) {
   process.exit(1);
 }
 
+// Node 22 SEA executes the embedded script as CommonJS only (see Node 22 docs). Use cli-sea.cjs.
 const config = {
   main: resolve(mainJs),
-  mainFormat: 'module',
   output: resolve(blobPath),
   disableExperimentalSEAWarning: true,
   useCodeCache: false,

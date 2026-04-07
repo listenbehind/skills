@@ -113,8 +113,9 @@ pnpm install
 # Build
 pnpm build
 
-# Local Node SEA binary (after build), e.g. Windows:
-#   set SEA_OUTPUT_NAME=skills-windows-amd64.exe && pnpm run build:sea
+# Local Node SEA binary (after pnpm build), e.g. Windows:
+#   pnpm run build:sea
+# Uses dist/cli-sea.cjs (esbuild CJS) because Node 22 SEA only runs embedded CommonJS.
 
 # Test locally
 pnpm dev add vercel-labs/agent-skills --list

@@ -1,6 +1,6 @@
 {
   "name": "skills",
-  "version": "1.4.10",
+  "version": "1.4.11",
   "description": "The open agent skills ecosystem",
   "type": "module",
   "bin": {
@@ -15,7 +15,8 @@
   ],
   "scripts": {
     "build": "tsx scripts/generate-licenses.ts && obuild",
-    "build:sea": "node scripts/build-sea.mjs",
+    "build:sea": "node scripts/bundle-sea-cjs.mjs && node scripts/build-sea.mjs",
+    "bundle:sea-cjs": "node scripts/bundle-sea-cjs.mjs",
     "generate-licenses": "tsx scripts/generate-licenses.ts",
     "dev": "node src/cli.ts",
     "exec:test": "node scripts/execute-tests.ts",
@@ -97,6 +98,7 @@
     "@clack/prompts": "^0.11.0",
     "@types/bun": "latest",
     "@types/node": "^22.10.0",
+    "esbuild": "^0.28.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "obuild": "^0.4.22",

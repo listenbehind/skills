@@ -18,6 +18,11 @@ import { buildUpdateInstallSource, formatSourceInput } from './update-source.ts'
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 function getVersion(): string {
+  const embedded = (globalThis as { __SKILLS_EMBEDDED_VERSION__?: string })
+    .__SKILLS_EMBEDDED_VERSION__;
+  if (typeof embedded === 'string' && embedded.length > 0) {
+    return embedded;
+  }
   try {
     const pkgPath = join(__dirname, '..', 'package.json');
     const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
@@ -562,19 +567,15 @@ async function runUpdate(): Promise<void> {
     const installUrl = buildUpdateInstallSource(update.entry);
 
     // Reinstall using the current CLI entrypoint directly (avoid nested npm exec/npx)
-    const cliEntry = join(__dirname, '..', 'bin', 'cli.mjs');
-    if (!existsSync(cliEntry)) {
-      failCount++;
-      console.log(
-        `  ${DIM}✗ Failed to update ${update.name}: CLI entrypoint not found at ${cliEntry}${RESET}`
-      );
-      continue;
-    }
-    const result = spawnSync(process.execPath, [cliEntry, 'add', installUrl, '-g', '-y'], {
-      stdio: ['inherit', 'pipe', 'pipe'],
-      encoding: 'utf-8',
+    const shim = join(__dirname, '..', 'bin', 'cli.mjs');
+    const spawnOpts = {
+      stdio: ['inherit', 'pipe', 'pipe'] as const,
+      encoding: 'utf-8' as const,
       shell: process.platform === 'win32',
-    });
+    };
+    const result = existsSync(shim)
+      ? spawnSync(process.execPath, [shim, 'add', installUrl, '-g', '-y'], spawnOpts)
+      : spawnSync(process.execPath, ['add', installUrl, '-g', '-y'], spawnOpts);
 
     if (result.status === 0) {
       successCount++;
