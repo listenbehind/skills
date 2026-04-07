@@ -2,10 +2,13 @@
 # Run via install.bat or: powershell -NoProfile -ExecutionPolicy Bypass -File install.ps1
 #
 # Environment:
-#   SKILLS_GITHUB_REPO   owner/repo (default: vercel-labs/skills)
+#   SKILLS_GITHUB_REPO   owner/repo (default: listenbehind/skills)
 #   SKILLS_VERSION       tag like v1.4.8, or "latest" (default: latest)
 #   SKILLS_INSTALL_DIR   directory for skills.exe (default: %USERPROFILE%\.local\bin)
 #   GITHUB_TOKEN         optional; helps with API rate limits
+#
+# Downloads skills-windows-*-64.exe from the release. CI currently ships skills-windows-amd64.exe;
+# ARM64 Windows requires that asset to exist on the release (add a matrix row to build it).
 
 $ErrorActionPreference = "Stop"
 

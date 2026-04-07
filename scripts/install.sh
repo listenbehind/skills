@@ -8,17 +8,19 @@
 #   curl -fsSL .../install.sh | SKILLS_VERSION=v1.4.8 sh
 #
 # Environment:
-#   SKILLS_GITHUB_REPO   owner/repo (default: vercel-labs/skills)
+#   SKILLS_GITHUB_REPO   owner/repo (default: listenbehind/skills)
 #   SKILLS_VERSION       tag like v1.4.8, or "latest" (default: latest)
 #   SKILLS_INSTALL_DIR   install directory (default: $HOME/.local/bin)
 #   GITHUB_TOKEN         optional; raises GitHub API rate limits for "latest"
 #
-# Release assets (attach these names to each GitHub release):
-#   skills-windows-amd64.exe
-#   skills-linux-amd64
-#   skills-linux-arm64
-#   skills-darwin-amd64
-#   skills-darwin-arm64
+# Release asset names this script downloads (must exist on the GitHub Release):
+#   skills-linux-amd64 / skills-linux-arm64
+#   skills-darwin-amd64 / skills-darwin-arm64
+#   skills-windows-amd64.exe / skills-windows-arm64.exe
+#
+# listenbehind/skills CI (.github/workflows/release-sea.yml) currently publishes only:
+#   skills-linux-amd64, skills-darwin-arm64, skills-windows-amd64.exe
+# On Linux ARM or Intel Mac, install via npm or add those targets back to the workflow.
 
 set -eu
 
