@@ -3,7 +3,26 @@ import { join, normalize, resolve, sep } from 'path';
 import { mkdtemp, rm } from 'fs/promises';
 import { tmpdir } from 'os';
 
-const CLONE_TIMEOUT_MS = 60000; // 60 seconds
+/** Default git operation block timeout (slow networks / large repos). */
+const DEFAULT_CLONE_TIMEOUT_MS = 300_000; // 5 minutes
+
+const MIN_CLONE_TIMEOUT_MS = 5_000;
+const MAX_CLONE_TIMEOUT_MS = 1_800_000; // 30 minutes
+
+export function resolveCloneTimeoutMs(): number {
+  const raw = process.env.SKILLS_GIT_CLONE_TIMEOUT_MS?.trim();
+  if (raw) {
+    const parsed = Number.parseInt(raw, 10);
+    if (
+      Number.isFinite(parsed) &&
+      parsed >= MIN_CLONE_TIMEOUT_MS &&
+      parsed <= MAX_CLONE_TIMEOUT_MS
+    ) {
+      return parsed;
+    }
+  }
+  return DEFAULT_CLONE_TIMEOUT_MS;
+}
 
 export class GitCloneError extends Error {
   readonly url: string;
@@ -21,8 +40,9 @@ export class GitCloneError extends Error {
 
 export async function cloneRepo(url: string, ref?: string): Promise<string> {
   const tempDir = await mkdtemp(join(tmpdir(), 'skills-'));
+  const cloneTimeoutMs = resolveCloneTimeoutMs();
   const git = simpleGit({
-    timeout: { block: CLONE_TIMEOUT_MS },
+    timeout: { block: cloneTimeoutMs },
     env: { ...process.env, GIT_TERMINAL_PROMPT: '0' },
   });
   const cloneOptions = ref ? ['--depth', '1', '--branch', ref] : ['--depth', '1'];
@@ -43,9 +63,11 @@ export async function cloneRepo(url: string, ref?: string): Promise<string> {
       errorMessage.includes('Repository not found');
 
     if (isTimeout) {
+      const sec = Math.round(cloneTimeoutMs / 1000);
       throw new GitCloneError(
-        `Clone timed out after 60s. This often happens with private repos that require authentication.\n` +
-          `  Ensure you have access and your SSH keys or credentials are configured:\n` +
+        `Clone timed out after ${sec}s (limit: SKILLS_GIT_CLONE_TIMEOUT_MS, default ${DEFAULT_CLONE_TIMEOUT_MS / 1000}s). ` +
+          `Slow links and large repos may need a higher value.\n` +
+          `  This also happens with private repos that require authentication — ensure you have access:\n` +
           `  - For SSH: ssh-add -l (to check loaded keys)\n` +
           `  - For HTTPS: gh auth status (if using GitHub CLI)`,
         url,

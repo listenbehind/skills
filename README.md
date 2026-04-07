@@ -21,7 +21,7 @@ Or use a **standalone binary** (Node [single executable](https://nodejs.org/api/
 curl -fsSL https://raw.githubusercontent.com/listenbehind/skills/main/scripts/install.sh | sh
 
 # Pin a version
-SKILLS_VERSION=v1.4.11 curl -fsSL https://raw.githubusercontent.com/listenbehind/skills/main/scripts/install.sh | sh
+SKILLS_VERSION=v1.4.12 curl -fsSL https://raw.githubusercontent.com/listenbehind/skills/main/scripts/install.sh | sh
 ```
 
 Windows: run `scripts/install.bat` from a clone, or download `install.bat` and `install.ps1` from `scripts/` in this repo and run `install.bat`. The binary is `%USERPROFILE%\.local\bin\skills.exe`. The script downloads **`skills-windows-amd64.exe`** (ARM64 PCs use x64 emulation unless you publish `skills-windows-arm64.exe` and set `SKILLS_WINDOWS_ARCH=arm64`). If `skills` is not found in an **already open** PowerShell window, either open a **new** terminal or refresh PATH: `$env:Path = [System.Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [System.Environment]::GetEnvironmentVariable('Path','User')`. Then run `skills` (no `.exe` needed when PATH is correct).
@@ -424,7 +424,7 @@ Ensure you have write access to the target directory.
 
 ### Standalone `skills.exe` (Node SEA) errors mentioning `D:\a\...`
 
-GitHub Actions Windows runners use a workspace like `D:\a\<repo>\<repo>`. Older release binaries embedded the ESM `dist/cli.mjs` while **Node.js 22 SEA only runs embedded CommonJS**; that showed up as paths under `D:\a\...` and `import` syntax errors. Use **v1.4.11** or newer from [Releases](https://github.com/listenbehind/skills/releases), which ship a CJS bundle (`cli-sea.cjs`) inside the executable.
+GitHub Actions Windows runners use a workspace like `D:\a\<repo>\<repo>`. Older release binaries embedded the ESM `dist/cli.mjs` while **Node.js 22 SEA only runs embedded CommonJS**; that showed up as paths under `D:\a\...` and `import` syntax errors. Use **v1.4.12** or newer from [Releases](https://github.com/listenbehind/skills/releases), which ship a CJS bundle (`cli-sea.cjs`) inside the executable.
 
 ## Environment Variables
 

@@ -5,11 +5,11 @@
 #   curl -fsSL https://raw.githubusercontent.com/OWNER/REPO/main/scripts/install.sh | sh
 #
 # Or with an explicit version tag:
-#   curl -fsSL .../install.sh | SKILLS_VERSION=v1.4.11 sh
+#   curl -fsSL .../install.sh | SKILLS_VERSION=v1.4.12 sh
 #
 # Environment:
 #   SKILLS_GITHUB_REPO   owner/repo (default: listenbehind/skills)
-#   SKILLS_VERSION       tag like v1.4.11, or "latest" (default: latest)
+#   SKILLS_VERSION       tag like v1.4.12, or "latest" (default: latest)
 #   SKILLS_INSTALL_DIR   install directory (default: $HOME/.local/bin)
 #   GITHUB_TOKEN         optional; raises GitHub API rate limits for "latest"
 #
