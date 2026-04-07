@@ -38,6 +38,15 @@ export class GitCloneError extends Error {
   }
 }
 
+function cloneLogDisabled(): boolean {
+  return process.env.SKILLS_GIT_CLONE_LOG === '0' || process.env.SKILLS_GIT_CLONE_LOG === 'false';
+}
+
+function logClonePhase(message: string): void {
+  if (cloneLogDisabled()) return;
+  console.error(`skills: ${message}`);
+}
+
 export async function cloneRepo(url: string, ref?: string): Promise<string> {
   const tempDir = await mkdtemp(join(tmpdir(), 'skills-'));
   const cloneTimeoutMs = resolveCloneTimeoutMs();
@@ -45,10 +54,23 @@ export async function cloneRepo(url: string, ref?: string): Promise<string> {
     timeout: { block: cloneTimeoutMs },
     env: { ...process.env, GIT_TERMINAL_PROMPT: '0' },
   });
-  const cloneOptions = ref ? ['--depth', '1', '--branch', ref] : ['--depth', '1'];
+  const cloneOptions: string[] = [...(ref ? ['--depth', '1', '--branch', ref] : ['--depth', '1'])];
+  if (
+    process.env.SKILLS_GIT_CLONE_PROGRESS === '1' ||
+    process.env.SKILLS_GIT_CLONE_PROGRESS === 'true'
+  ) {
+    cloneOptions.push('--progress');
+  }
+
+  const refLabel = ref ? ` @ ${ref}` : '';
+  const timeoutSec = Math.round(cloneTimeoutMs / 1000);
+  logClonePhase(
+    `git clone starting — ${url}${refLabel} → ${tempDir} (block timeout ${timeoutSec}s; set SKILLS_GIT_CLONE_PROGRESS=1 for receive/progress lines)`
+  );
 
   try {
     await git.clone(url, tempDir, cloneOptions);
+    logClonePhase(`git clone finished — ${tempDir}`);
     return tempDir;
   } catch (error) {
     // Clean up temp dir on failure
@@ -88,6 +110,11 @@ export async function cloneRepo(url: string, ref?: string): Promise<string> {
       );
     }
 
+    if (!cloneLogDisabled()) {
+      console.error(
+        `skills: git clone failed — ${url}${refLabel} (${errorMessage.split('\n')[0]})`
+      );
+    }
     throw new GitCloneError(`Failed to clone ${url}: ${errorMessage}`, url, false, false);
   }
 }

@@ -43,7 +43,7 @@ src/
 ├── local-lock.ts    # Local lock file management (skills-lock.json, checked in)
 ├── sync.ts          # Sync command - crawl node_modules for skills
 ├── source-parser.ts # Parse git URLs, GitHub shorthand, local paths
-├── git.ts           # Git clone operations (SKILLS_GIT_CLONE_TIMEOUT_MS, default 300s)
+├── git.ts           # Git clone operations (SKILLS_GIT_CLONE_TIMEOUT_MS; clone logs: SKILLS_GIT_CLONE_LOG=0 off, SKILLS_GIT_CLONE_PROGRESS=1 for git --progress)
 ├── telemetry.ts     # Anonymous usage tracking
 ├── types.ts         # TypeScript types
 ├── mintlify.ts      # Mintlify skill fetching (legacy)

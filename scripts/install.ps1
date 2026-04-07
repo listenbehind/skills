@@ -3,7 +3,7 @@
 #
 # Environment:
 #   SKILLS_GITHUB_REPO   owner/repo (default: listenbehind/skills)
-#   SKILLS_VERSION       tag like v1.4.12, or "latest" (default: latest)
+#   SKILLS_VERSION       tag like v1.4.13, or "latest" (default: latest)
 #   SKILLS_INSTALL_DIR   directory for skills.exe (default: %USERPROFILE%\.local\bin)
 #   GITHUB_TOKEN         optional; helps with API rate limits
 #   SKILLS_WINDOWS_ARCH  amd64 (default) or arm64 — must match a release asset name

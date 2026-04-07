@@ -19,7 +19,7 @@ curl -fsSL https://raw.githubusercontent.com/listenbehind/skills/main/scripts/in
 **固定某一 Release 标签**（与脚本里解析的 tag 一致，通常带 `v` 前缀）：
 
 ```bash
-SKILLS_VERSION=v1.4.12 curl -fsSL https://raw.githubusercontent.com/listenbehind/skills/main/scripts/install.sh | sh
+SKILLS_VERSION=v1.4.13 curl -fsSL https://raw.githubusercontent.com/listenbehind/skills/main/scripts/install.sh | sh
 ```
 
 **环境变量（可选）**：
@@ -27,7 +27,7 @@ SKILLS_VERSION=v1.4.12 curl -fsSL https://raw.githubusercontent.com/listenbehind
 | 变量                 | 含义                                             |
 | -------------------- | ------------------------------------------------ |
 | `SKILLS_GITHUB_REPO` | 默认 `listenbehind/skills`；fork 时可改。        |
-| `SKILLS_VERSION`     | `latest` 或 `v1.4.12` 等 tag。                   |
+| `SKILLS_VERSION`     | `latest` 或 `v1.4.13` 等 tag。                   |
 | `SKILLS_INSTALL_DIR` | 安装目录，默认 `$HOME/.local/bin`。              |
 | `GITHUB_TOKEN`       | 可选；提高 GitHub API 额度（解析 `latest` 时）。 |
 
