@@ -1,8 +1,32 @@
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import { join } from 'path';
+import { pathToFileURL } from 'url';
 
-// const PROJECT_ROOT = join(import.meta.dirname, '..');
+const REPO_ROOT = join(import.meta.dirname, '..');
 const CLI_PATH = join(import.meta.dirname, 'cli.ts');
+/** Absolute file URL so `--import` works when tests set `cwd` to a temp dir (bare `tsx` resolves from cwd). */
+const TSX_LOADER = pathToFileURL(join(REPO_ROOT, 'node_modules', 'tsx', 'dist', 'loader.mjs')).href;
+
+/** Run CLI entrypoint via tsx so integration tests work on Node without native .ts execution. */
+function execCli(
+  args: string[],
+  options: {
+    cwd?: string;
+    env?: NodeJS.ProcessEnv;
+    timeout?: number;
+    input?: string;
+  }
+): string {
+  const { cwd, env, timeout = 30_000, input } = options;
+  return execFileSync(process.execPath, ['--import', TSX_LOADER, CLI_PATH, ...args], {
+    encoding: 'utf-8',
+    cwd,
+    stdio: 'pipe',
+    env,
+    timeout,
+    input,
+  });
+}
 
 export function stripAnsi(str: string): string {
   return str.replace(/\x1b\[[0-9;]*m/g, '');
@@ -27,12 +51,10 @@ export function runCli(
   timeout?: number
 ): { stdout: string; stderr: string; exitCode: number } {
   try {
-    const output = execSync(`node "${CLI_PATH}" ${args.join(' ')}`, {
-      encoding: 'utf-8',
+    const output = execCli(args, {
       cwd,
-      stdio: ['pipe', 'pipe', 'pipe'],
       env: env ? { ...process.env, ...env } : undefined,
-      timeout: timeout ?? 30000,
+      timeout: timeout ?? 30_000,
     });
     return { stdout: stripAnsi(output), stderr: '', exitCode: 0 };
   } catch (error: any) {
@@ -55,11 +77,10 @@ export function runCliWithInput(
   cwd?: string
 ): { stdout: string; stderr: string; exitCode: number } {
   try {
-    const output = execSync(`node "${CLI_PATH}" ${args.join(' ')}`, {
-      encoding: 'utf-8',
+    const output = execCli(args, {
       cwd,
       input: input + '\n',
-      stdio: ['pipe', 'pipe', 'pipe'],
+      timeout: 30_000,
     });
     return { stdout: stripAnsi(output), stderr: '', exitCode: 0 };
   } catch (error: any) {
